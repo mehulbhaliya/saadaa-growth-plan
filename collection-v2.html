@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAADAA · Pure Linen Collection v2 — CRO prototype</title>
+<style>
+  :root{
+    --bg:#F6F2EB; --surface:#FFFFFF; --ink:#211D17; --muted:#6E6557;
+    --line:#E4DCCF; --sand:#9C7A4E; --sand-soft:#EFE6D6;
+    --good:#2F6B4F; --good-soft:#E3F0E8; --bad:#B23A48; --bad-soft:#F6E4E6;
+    --shadow:0 18px 50px -24px rgba(33,29,23,.45);
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:24px 16px 80px}
+  h1{font-family:var(--serif);font-weight:600;font-size:26px;margin:0 0 4px;text-align:center}
+  .sub{color:var(--muted);font-size:14px;max-width:64ch;margin:0 auto;text-align:center}
+  .toggle{display:flex;justify-content:center;margin:18px auto 22px;width:max-content;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px;box-shadow:var(--shadow)}
+  .toggle button{border:0;background:transparent;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 20px;border-radius:999px;cursor:pointer;color:var(--muted)}
+  .toggle button.on{background:var(--ink);color:#fff}
+  .wrap{max-width:1180px;margin:0 auto}
+  body.after .beforeonly{display:none!important}
+  body.before .afteronly{display:none!important}
+
+  /* credential bar (after) */
+  .cred{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;background:var(--sand-soft);border:1px solid #e8d8bf;border-radius:14px;padding:13px 18px;margin-bottom:16px;font-size:13px;font-weight:600;color:#6b4f29}
+  .cred span{display:flex;align-items:center;gap:7px}
+
+  /* sticky filter/sort bar (after) */
+  .bar{position:sticky;top:0;z-index:5;display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;margin-bottom:8px;box-shadow:var(--shadow)}
+  .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .seg button{border:0;background:#fbf9f5;font-weight:700;font-size:13px;padding:8px 16px;cursor:pointer;color:var(--muted)}
+  .seg button.on{background:var(--ink);color:#fff}
+  .chips{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink)}
+  .chip.on{background:var(--sand);color:#fff;border-color:var(--sand)}
+  .spacer{flex:1}
+  .sort{border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:13px;font-family:var(--sans);background:#fbf9f5;font-weight:600}
+  .count{font-size:13px;color:var(--muted);margin:10px 2px 14px;font-weight:600}
+
+  /* unified grid (after) */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative;transition:transform .12s ease,box-shadow .12s ease}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+  .card .ph{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:600}
+  .card .body{padding:11px 12px 14px}
+  .card .nm{font-size:13px;font-weight:600;line-height:1.3;min-height:34px}
+  .card .pr{font-size:13.5px;font-weight:800;margin-top:5px}
+  .card .pr s{color:var(--muted);font-weight:400;font-size:11.5px;margin-left:4px}
+  .card .rt{font-size:11.5px;color:var(--muted);margin-top:4px}
+  .qa{position:absolute;left:10px;right:10px;bottom:54px;opacity:0;transform:translateY(6px);transition:.14s;background:rgba(33,29,23,.92);color:#fff;border:0;border-radius:9px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer}
+  .card:hover .qa{opacity:1;transform:translateY(0)}
+  .fitbadge{position:absolute;top:9px;left:9px;background:var(--good-soft);color:var(--good);font-size:10px;font-weight:800;padding:3px 7px;border-radius:6px}
+
+  /* BEFORE: carousel stack */
+  .caro{margin-bottom:26px}
+  .caro h3{font-family:var(--serif);font-size:17px;text-align:center;margin:0 0 4px}
+  .caro .va{text-align:center;font-size:12px;font-weight:700;text-decoration:underline;color:var(--ink);margin-bottom:10px}
+  .track{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}
+  .track .card{min-width:170px}
+  .beforeonly .note-b{background:var(--bad-soft);border:1px solid #e6c9cd;color:#7d2531;border-radius:12px;padding:12px 16px;font-size:13px;margin-bottom:18px}
+
+  .notes{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px 24px;margin-top:26px;max-width:1180px}
+  .notes .k{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--sand);font-weight:800;margin-bottom:6px}
+  .notes h3{font-family:var(--serif);font-size:20px;margin:0 0 10px}
+  .notes p{font-size:13.5px;color:var(--muted);margin:6px 0}
+  .hyp{font-size:13px;color:var(--ink);background:#fbf9f5;border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-top:10px}
+  .hyp b{color:var(--good)}
+  .pill{display:inline-block;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:6px;margin-right:6px}
+  .p-low{background:var(--good-soft);color:var(--good)} .p-high{background:var(--bad-soft);color:var(--bad)}
+</style>
+</head>
+<body class="after">
+<h1>Pure Linen Collection — Before → After</h1>
+<p class="sub">The live collection is <b>6 near-identical carousels stacked vertically</b> with no way to filter, sort, or narrow. Toggle to see a faceted grid. The filters and sort below actually work.</p>
+<div class="toggle">
+  <button id="bBefore" onclick="setMode('before')">Before · live site</button>
+  <button id="bAfter" class="on" onclick="setMode('after')">After · proposed</button>
+</div>
+
+<div class="wrap">
+  <!-- AFTER -->
+  <div class="afteronly cred">
+    <span>🇪🇺 100% European Linen</span><span>🌿 OEKO-TEX® certified</span><span>🧵 Breathable, naturally</span><span>↩️ 7-day free size exchange</span>
+  </div>
+
+  <div class="afteronly bar">
+    <div class="seg">
+      <button class="on" onclick="setG('women',this)">Women</button>
+      <button onclick="setG('men',this)">Men</button>
+    </div>
+    <div class="chips" id="chips">
+      <span class="chip" data-f="shirt" onclick="tog(this)">Shirts</span>
+      <span class="chip" data-f="top" onclick="tog(this)">Tops</span>
+      <span class="chip" data-f="halter" onclick="tog(this)">Halter</span>
+      <span class="chip" data-f="full" onclick="tog(this)">Full sleeve</span>
+      <span class="chip" data-f="under2k" onclick="tog(this)">Under ₹2,000</span>
+    </div>
+    <div class="spacer"></div>
+    <select class="sort" id="sort" onchange="render()">
+      <option value="pop">Sort: Popular</option>
+      <option value="low">Price · low to high</option>
+      <option value="high">Price · high to low</option>
+      <option value="rate">Top rated</option>
+    </select>
+  </div>
+  <div class="afteronly count" id="count">Showing 12 styles</div>
+  <div class="afteronly grid" id="grid"></div>
+
+  <!-- BEFORE -->
+  <div class="beforeonly">
+    <div class="note-b">⚠️ Live behaviour: no filter bar, no sort, no result count, no Women/Men toggle. The shopper must scroll through every carousel and open each PDP to compare. 6 carousels × "VIEW ALL" = decision fatigue.</div>
+    <div id="caros"></div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="notes">
+    <div class="k">New finding · round 2 · N5</div>
+    <h3>The collection page has no navigation — only scroll</h3>
+    <p><b>Issue:</b> Pure Linen renders as 6 stacked horizontal carousels (Collared Shirt Top, Halter Neck Top, Full Sleeve Shirts, Notch Collar Shirt, Half Sleeve Shirt, Shirts…), each with its own "VIEW ALL". There is no filter, no sort, no price/size facet, no result count, and no Women|Men toggle at the top. To compare two linen shirts a shopper must scroll past everything and open multiple PDPs.</p>
+    <p><b>Why it's distinct from F7:</b> F7 was about <em>where the certification sits</em>. This is about <em>information architecture</em> — the page offers no path to narrow intent, which is the single biggest driver of PLP→PDP→ATC on apparel.</p>
+    <div class="hyp">Hypothesis: replacing the carousel stack with a <b>filterable/sortable unified grid + sticky facet bar + quick-add</b> increases products-viewed-per-session and PLP→PDP rate → <b>↑ add-to-cart from collection</b>. Metric: PLP→PDP CTR, ATC-from-PLP, scroll-depth-to-PDP. Tooling: VWO/Optimizely split on the collection template.</div>
+    <div style="margin-top:12px"><span class="pill p-low">Effort · Med (template change)</span><span class="pill p-high">Impact · High</span></div>
+  </div>
+</div>
+
+<script>
+  var PRODUCTS = [
+    {n:"Women Collared Shirt Top", t:["shirt","top"], p:2199, m:4398, r:4.9, c:1245, col:"#e9d3d6", g:"women", pop:98, fit:"True to size"},
+    {n:"Women Halter Neck Top", t:["halter","top"], p:1799, m:3598, r:4.8, c:880, col:"#dfe4d0", g:"women", pop:90, fit:"True to size"},
+    {n:"Women Notch Collar Shirt", t:["shirt"], p:2199, m:4398, r:4.9, c:1490, col:"#f0e6d2", g:"women", pop:95, fit:""},
+    {n:"Women Half Sleeve Shirt", t:["shirt"], p:2199, m:4398, r:4.7, c:610, col:"#e7d7c4", g:"women", pop:80, fit:""},
+    {n:"Women Pure Linen Shirt", t:["shirt"], p:2499, m:4998, r:4.9, c:2040, col:"#d8c9b4", g:"women", pop:99, fit:"True to size"},
+    {n:"Women Full Sleeve Top", t:["full","top"], p:1990, m:3980, r:4.6, c:430, col:"#ece1e3", g:"women", pop:72, fit:""},
+    {n:"Women Sleeveless Linen Top", t:["top"], p:1599, m:3198, r:4.7, c:520, col:"#e3ead9", g:"women", pop:78, fit:"Runs small"},
+    {n:"Women Linen Co-ord", t:["top"], p:2899, m:5798, r:4.8, c:360, col:"#e8ddcb", g:"women", pop:84, fit:""},
+    {n:"Men Pure Linen Full Sleeve Shirt", t:["shirt","full"], p:2499, m:4998, r:4.9, c:1760, col:"#dcdfe2", g:"men", pop:97, fit:"True to size"},
+    {n:"Men Half Sleeve Linen Shirt", t:["shirt"], p:2199, m:4398, r:4.8, c:940, col:"#e0d6c2", g:"men", pop:88, fit:""},
+    {n:"Men Notch Collar Shirt", t:["shirt"], p:2399, m:4798, r:4.7, c:510, col:"#d6cab2", g:"men", pop:75, fit:""},
+    {n:"Men Linen Kurta Shirt", t:["shirt","full"], p:2699, m:5398, r:4.9, c:1320, col:"#e4e0d4", g:"men", pop:92, fit:"True to size"}
+  ];
+  var grp='women', filters=[];
+  function setMode(m){
+    document.body.className=m;
+    document.getElementById('bBefore').classList.toggle('on',m==='before');
+    document.getElementById('bAfter').classList.toggle('on',m==='after');
+  }
+  function setG(g,el){grp=g;[].forEach.call(el.parentNode.children,function(b){b.classList.remove('on')});el.classList.add('on');render();}
+  function tog(el){el.classList.toggle('on');var f=el.dataset.f;var i=filters.indexOf(f);if(i>=0)filters.splice(i,1);else filters.push(f);render();}
+  function card(p){
+    var stars='★'.repeat(Math.round(p.r));
+    return '<div class="card">'+
+      (p.fit?'<div class="fitbadge">✓ '+p.fit+'</div>':'')+
+      '<div class="ph" style="background:'+p.col+'">'+p.n.split(' ').slice(0,2).join(' ')+'</div>'+
+      '<button class="qa">+ Quick add · select size</button>'+
+      '<div class="body"><div class="nm">'+p.n+'</div>'+
+      '<div class="pr">₹'+p.p.toLocaleString('en-IN')+'<s>₹'+p.m.toLocaleString('en-IN')+'</s></div>'+
+      '<div class="rt">'+stars+' '+p.r+' · '+p.c.toLocaleString('en-IN')+' reviews</div></div></div>';
+  }
+  function render(){
+    var list=PRODUCTS.filter(function(p){return p.g===grp;});
+    filters.forEach(function(f){
+      if(f==='under2k') list=list.filter(function(p){return p.p<2000;});
+      else list=list.filter(function(p){return p.t.indexOf(f)>=0;});
+    });
+    var s=document.getElementById('sort').value;
+    list.sort(function(a,b){
+      if(s==='low')return a.p-b.p; if(s==='high')return b.p-a.p;
+      if(s==='rate')return b.r-a.r; return b.pop-a.pop;
+    });
+    document.getElementById('count').textContent='Showing '+list.length+' style'+(list.length!==1?'s':'');
+    document.getElementById('grid').innerHTML=list.map(card).join('');
+  }
+  // before: build the stacked carousels
+  function buildCaros(){
+    var groups=[
+      ['Women Pure Linen Collared Shirt Top',['shirt','top']],
+      ['Women Pure Linen Halter Neck Top',['halter']],
+      ['Men Pure Linen Full Sleeve Shirts',['shirt','full']],
+      ['Women Pure Linen Notch Collar Shirt',['shirt']],
+      ['Men Pure Linen Half Sleeve Shirt',['shirt']],
+      ['Women Pure Linen Shirts',['shirt']]
+    ];
+    var html=groups.map(function(g){
+      var cards=PRODUCTS.slice().sort(function(){return Math.random()-.5;}).slice(0,6).map(card).join('');
+      return '<div class="caro"><h3>'+g[0]+'</h3><div class="va">VIEW ALL ›</div><div class="track">'+cards+'</div></div>';
+    }).join('');
+    document.getElementById('caros').innerHTML=html;
+  }
+  render(); buildCaros();
+</script>
+</body>
+</html>
